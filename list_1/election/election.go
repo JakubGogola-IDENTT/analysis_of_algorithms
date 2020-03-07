@@ -15,15 +15,14 @@ const (
 )
 
 // WithNodes - simulates leader election with given number of nodes
-func WithNodes(nodesCount uint) uint {
+func WithNodes(nodesCount int) (slotsCount int) {
 	slot := NONE
-	slotsCount := uint(0)
 
 	for slot != SINGLE {
 		slot = NONE
 		slotsCount++
 
-		for i := uint(0); i < nodesCount; i++ {
+		for i := 0; i < nodesCount; i++ {
 			broadcastProb := rand.Float64()
 
 			if broadcastProb >= 1.0/float64(nodesCount) {
@@ -42,20 +41,18 @@ func WithNodes(nodesCount uint) uint {
 }
 
 // WithUpperLimit - simulates lider election with given upper limit of nodes
-func WithUpperLimit(upperLimit uint, nodesCount uint) (uint, uint) {
+func WithUpperLimit(upperLimit, nodesCount int) (slotsCount int, roundsCount int) {
 	slot := NONE
-	slotsCount := uint(0)
-	roundsCount := uint(0)
 
-	limit := uint(math.Ceil(math.Log2(float64(upperLimit))))
+	limit := int(math.Ceil(math.Log2(float64(upperLimit))))
 
 	for slot != SINGLE {
 		roundsCount++
-		for i := uint(1); i <= limit; i++ {
+		for i := 1; i <= limit; i++ {
 			slot = NONE
 			slotsCount++
 
-			for j := uint(0); j < nodesCount; j++ {
+			for j := 0; j < nodesCount; j++ {
 				broadcastProb := rand.Float64()
 
 				if broadcastProb >= 1.0/math.Exp2(float64(i)) {
@@ -75,5 +72,5 @@ func WithUpperLimit(upperLimit uint, nodesCount uint) (uint, uint) {
 		}
 	}
 
-	return roundsCount, slotsCount
+	return slotsCount, roundsCount
 }

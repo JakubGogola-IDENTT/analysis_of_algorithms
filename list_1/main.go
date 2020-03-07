@@ -1,14 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"list_1/election"
-	"math/rand"
-	"time"
+	"list_1/analysis"
 )
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
-
-	fmt.Println(election.WithUpperLimit(100, 100))
+	analysis.Run()
 }
