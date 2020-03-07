@@ -2,7 +2,9 @@ package analysis
 
 import (
 	"fmt"
+	"list_1/election"
 	"log"
+	"math"
 	"strings"
 
 	"gonum.org/v1/plot"
@@ -60,7 +62,33 @@ func getTotal(data map[int]int) (total int) {
 }
 
 func computeStats(data map[int]int, iterationsCount int) {
-	variance := float64(getTotal(data)) / float64(iterationsCount)
+	expectedValue := float64(getTotal(data)) / float64(iterationsCount)
 
-	fmt.Println(variance)
+	var variance float64
+
+	for k, v := range data {
+		variance += float64(v) * math.Pow(float64(k)-expectedValue, 2.0)
+	}
+
+	variance = variance / float64(iterationsCount)
+
+	fmt.Printf("Expected value: %f\n", expectedValue)
+	fmt.Printf("Variance: %f\n", variance)
+	fmt.Printf("#################################\n")
+}
+
+func computerFirstRoundSuccessProbability(upperLimit, nodesCount, iterationsCount int) {
+	firstRoundSuccessCount := 0
+
+	for i := 0; i < iterationsCount; i++ {
+		_, roundsCount := election.WithUpperLimit(upperLimit, nodesCount)
+
+		if roundsCount == 1 {
+			firstRoundSuccessCount++
+		}
+	}
+
+	firstRoundSuccessProb := float64(firstRoundSuccessCount) / float64(iterationsCount)
+
+	fmt.Printf("Probability of success in first round: %f\n", firstRoundSuccessProb)
 }
