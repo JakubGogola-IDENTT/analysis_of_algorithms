@@ -74,7 +74,6 @@ func computeStats(data map[int]int, iterationsCount int) {
 
 	fmt.Printf("Expected value: %f\n", expectedValue)
 	fmt.Printf("Variance: %f\n", variance)
-	fmt.Printf("#################################\n")
 }
 
 func computerFirstRoundSuccessProbability(upperLimit, nodesCount, iterationsCount int) {
@@ -90,5 +89,5 @@ func computerFirstRoundSuccessProbability(upperLimit, nodesCount, iterationsCoun
 
 	firstRoundSuccessProb := float64(firstRoundSuccessCount) / float64(iterationsCount)
 
-	fmt.Printf("Probability of success in first round: %f\n", firstRoundSuccessProb)
+	fmt.Printf("Probability of success in first round: %f\n\n", firstRoundSuccessProb)
 }
