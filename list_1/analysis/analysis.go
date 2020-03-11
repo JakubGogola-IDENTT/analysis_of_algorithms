@@ -14,6 +14,8 @@ func Run() {
 	args := arguments{}
 	args.parseArgs()
 
+	fmt.Println(args)
+
 	withNodesAnalysis(args.n, args.i)
 
 	withUpperLimitAnalysis(args.u, 2, args.i)
