@@ -61,22 +61,22 @@ func getTotal(data map[int]int) (total int) {
 	return total
 }
 
-func computeStats(data map[int]int, iterationsCount int) {
-	expectedValue := float64(getTotal(data)) / float64(iterationsCount)
-
-	var variance float64
+func computeStats(data map[int]int, iterationsCount int) (expectedValue, variance float64) {
+	expectedValue = float64(getTotal(data)) / float64(iterationsCount)
 
 	for k, v := range data {
 		variance += float64(v) * math.Pow(float64(k)-expectedValue, 2.0)
 	}
 
-	variance = variance / float64(iterationsCount)
+	variance /= float64(iterationsCount)
 
 	fmt.Printf("Expected value: %f\n", expectedValue)
 	fmt.Printf("Variance: %f\n", variance)
+
+	return expectedValue, variance
 }
 
-func computerFirstRoundSuccessProbability(upperLimit, nodesCount, iterationsCount int) {
+func computerFirstRoundSuccessProbability(upperLimit, nodesCount, iterationsCount int) (firstRoundSuccessProb float64) {
 	firstRoundSuccessCount := 0
 
 	for i := 0; i < iterationsCount; i++ {
@@ -87,7 +87,9 @@ func computerFirstRoundSuccessProbability(upperLimit, nodesCount, iterationsCoun
 		}
 	}
 
-	firstRoundSuccessProb := float64(firstRoundSuccessCount) / float64(iterationsCount)
+	firstRoundSuccessProb = float64(firstRoundSuccessCount) / float64(iterationsCount)
 
-	fmt.Printf("Probability of success in first round: %f\n\n", firstRoundSuccessProb)
+	fmt.Printf("Probability of success in first round (\u03BB) : %f\n\n", firstRoundSuccessProb)
+
+	return firstRoundSuccessProb
 }

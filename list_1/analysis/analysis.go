@@ -14,16 +14,19 @@ func Run() {
 	args := arguments{}
 	args.parseArgs()
 
-	fmt.Println(args)
+	if args.t {
+		runTests(args)
+		return
+	}
 
-	withNodesAnalysis(args.n, args.i)
+	withNodesAnalysis(args.n, args.i, true, true)
 
-	withUpperLimitAnalysis(args.u, 2, args.i)
-	withUpperLimitAnalysis(args.u, args.u/2, args.i)
-	withUpperLimitAnalysis(args.u, args.u, args.i)
+	withUpperLimitAnalysis(args.u, 2, args.i, true, true)
+	withUpperLimitAnalysis(args.u, args.u/2, args.i, true, true)
+	withUpperLimitAnalysis(args.u, args.u, args.i, true, true)
 }
 
-func withNodesAnalysis(nodesCount, iterationsCount int) {
+func withNodesAnalysis(nodesCount, iterationsCount int, withStats bool, withHistogram bool) {
 	data := make(map[int]int)
 
 	for i := 0; i < iterationsCount; i++ {
@@ -32,15 +35,20 @@ func withNodesAnalysis(nodesCount, iterationsCount int) {
 		data[slot]++
 	}
 
-	createHistogram(data, "with_nodes")
-
 	fmt.Println("-------------------------------------")
 	fmt.Printf("With nodes (n = %d)\n", nodesCount)
 	fmt.Println("-------------------------------------")
-	computeStats(data, iterationsCount)
+
+	if withStats {
+		computeStats(data, iterationsCount)
+	}
+
+	if withHistogram {
+		createHistogram(data, fmt.Sprintf("with_nodes_n_%d", nodesCount))
+	}
 }
 
-func withUpperLimitAnalysis(upperLimit, nodesCount, iterationsCount int) {
+func withUpperLimitAnalysis(upperLimit, nodesCount, iterationsCount int, withStats bool, withHistogram bool) {
 	data := make(map[int]int)
 
 	for i := 0; i < iterationsCount; i++ {
@@ -52,7 +60,34 @@ func withUpperLimitAnalysis(upperLimit, nodesCount, iterationsCount int) {
 	fmt.Println("-------------------------------------")
 	fmt.Printf("With upper limit (u = %d, n = %d)\n", upperLimit, nodesCount)
 	fmt.Println("-------------------------------------")
-	createHistogram(data, fmt.Sprintf("with_upper_limit_u_%d_n_%d", upperLimit, nodesCount))
-	computeStats(data, iterationsCount)
-	computerFirstRoundSuccessProbability(upperLimit, nodesCount, iterationsCount)
+
+	if withStats {
+		computerFirstRoundSuccessProbability(upperLimit, nodesCount, iterationsCount)
+	}
+
+	if withHistogram {
+		createHistogram(data, fmt.Sprintf("with_upper_limit_u_%d_n_%d", upperLimit, nodesCount))
+	}
+}
+
+func runTests(args arguments) {
+	// task 2
+	fmt.Println("Task 2")
+	withNodesAnalysis(args.n, args.i, true, true)
+	withUpperLimitAnalysis(args.u, 2, args.i, false, true)
+	withUpperLimitAnalysis(args.u, args.u/2, args.i, false, true)
+	withUpperLimitAnalysis(args.u, args.u, args.i, false, true)
+
+	// task 3
+	fmt.Println("Task 3")
+	for n := 1; n <= args.n; n++ {
+		withNodesAnalysis(n, args.i, true, false)
+	}
+
+	// task 4
+	fmt.Println("Task 4")
+	withUpperLimitAnalysis(args.u, 2, args.i, true, false)
+	withUpperLimitAnalysis(args.u, args.u/2, args.i, true, false)
+	withUpperLimitAnalysis(args.u, args.u, args.i, true, false)
+
 }

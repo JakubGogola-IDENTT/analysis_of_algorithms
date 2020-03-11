@@ -41,13 +41,14 @@ func WithNodes(nodesCount int) (slotsCount int) {
 }
 
 // WithUpperLimit - simulates lider election with given upper limit of nodes
-func WithUpperLimit(upperLimit, nodesCount int) (slotsCount int, roundsCount int) {
+func WithUpperLimit(upperLimit, nodesCount int) (slotsCount, roundsCount int) {
 	slot := NONE
 
 	limit := int(math.Ceil(math.Log2(float64(upperLimit))))
 
 	for slot != SINGLE {
 		roundsCount++
+
 		for i := 1; i <= limit; i++ {
 			slot = NONE
 			slotsCount++
