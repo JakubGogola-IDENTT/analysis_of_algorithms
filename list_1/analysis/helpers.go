@@ -21,6 +21,8 @@ func createHistogram(data map[int]int, title string) {
 
 	p.Title.Text = title
 
+	data = addMissingValues(data)
+
 	values := make(plotter.XYs, len(data))
 
 	i := 0
@@ -43,6 +45,24 @@ func createHistogram(data map[int]int, title string) {
 		log.Fatal(err)
 	}
 
+}
+
+func addMissingValues(data map[int]int) map[int]int {
+	maxK := 0
+
+	for k := range data {
+		if k > maxK {
+			maxK = k
+		}
+	}
+
+	for i := 1; i <= maxK; i++ {
+		if _, ok := data[i]; !ok {
+			data[i] = 1
+		}
+	}
+
+	return data
 }
 
 func extractValues(data map[int]int) (values []int) {

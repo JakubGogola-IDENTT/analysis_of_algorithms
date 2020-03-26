@@ -48,6 +48,7 @@ func WithUpperLimit(upperLimit, nodesCount int) (slotsCount, roundsCount int) {
 
 	for slot != SINGLE {
 		roundsCount++
+		slotsCount = 0
 
 		for i := 1; i <= limit; i++ {
 			slot = NONE
