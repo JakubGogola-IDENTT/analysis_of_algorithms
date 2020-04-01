@@ -1,8 +1,10 @@
 package counting
 
 import (
-	"crypto/sha256"
+	"crypto/md5"
 	"encoding/binary"
+	"fmt"
+	"math/rand"
 	"strconv"
 )
 
@@ -19,7 +21,7 @@ func ones(k int) []float64 {
 func getHash(value int) (hash float64) {
 	data := []byte(strconv.Itoa(value))
 
-	hashFunc := sha256.New()
+	hashFunc := md5.New()
 	hashFunc.Write(data)
 
 	hashBytes := hashFunc.Sum(nil)
@@ -59,6 +61,24 @@ func generateMultiset(size int) []int {
 	return multiset
 }
 
-func generateMultisetWithRepetitions(size int) {
+func generateMultisetWithRepetitions(size int) []int {
+	var multiset []int
 
+	for i := 0; i < size; i++ {
+		repetitions := rand.Intn(5)
+
+		for j := 0; j < repetitions; j++ {
+			multiset = append(multiset, i)
+		}
+	}
+
+	return multiset
+}
+
+func getFileName(k int, withRepetitions bool) string {
+	if withRepetitions {
+		return fmt.Sprintf("k_%d_rep.csv", k)
+	}
+
+	return fmt.Sprintf("k_%d.csv", k)
 }

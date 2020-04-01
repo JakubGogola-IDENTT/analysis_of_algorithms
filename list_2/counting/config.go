@@ -7,15 +7,17 @@ import (
 
 // MinCount is struct which holds data for algorithm
 type MinCount struct {
-	multisetSize int
-	k            int
-	testMode     bool
+	multisetSize    int
+	k               int
+	testMode        bool
+	withRepetitions bool
 }
 
 func (mc *MinCount) parseFlags() {
-	flag.IntVar(&mc.k, "k", 300, "size of array with hashes (default: 2)")
+	flag.IntVar(&mc.k, "k", 2, "size of array with hashes (default: 2)")
 	flag.IntVar(&mc.multisetSize, "multisetSize", 1000, "size of multiset (default: 100)")
 	flag.BoolVar(&mc.testMode, "testMode", false, "test mode")
+	flag.BoolVar(&mc.withRepetitions, "withRepetitions", false, "with repetitions")
 	flag.Parse()
 }
 
@@ -23,7 +25,13 @@ func (mc *MinCount) parseFlags() {
 func (mc *MinCount) Init() {
 	mc.parseFlags()
 
-	multiset := generateMultiset(mc.multisetSize)
+	multiset := generateMultisetWithRepetitions(mc.multisetSize)
+
+	if mc.testMode {
+		runTests(mc.withRepetitions)
+		return
+	}
+
 	count := counting(multiset, mc.k)
 
 	fmt.Println(count)
