@@ -5,7 +5,7 @@ import "sort"
 // counting is implementation of Min Count algorithm
 // multiset represents set of values to count.
 // k is size of hashes array
-func counting(multiset []int, k int) float64 {
+func counting(multiset []int, k int) int {
 	var M = ones(k)
 
 	k--
@@ -20,12 +20,8 @@ func counting(multiset []int, k int) float64 {
 	}
 
 	if M[k] == 1. {
-		for _, m := range M {
-			if m != 1. {
-				return m
-			}
-		}
+		return countNonOnes(M)
 	}
 
-	return float64(k-1) / M[k]
+	return int(float64(k-1) / M[k])
 }

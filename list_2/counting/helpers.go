@@ -29,6 +29,16 @@ func getHash(value int) (hash float64) {
 	return hash
 }
 
+func countNonOnes(arr []float64) (count int) {
+	for _, elt := range arr {
+		if elt != 1. {
+			count++
+		}
+	}
+
+	return count
+}
+
 func includes(value float64, arr []float64) bool {
 	for _, v := range arr {
 		if v == value {
@@ -47,4 +57,8 @@ func generateMultiset(size int) []int {
 	}
 
 	return multiset
+}
+
+func generateMultisetWithRepetitions(size int) {
+
 }
