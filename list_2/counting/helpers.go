@@ -65,7 +65,7 @@ func generateMultisetWithRepetitions(size int) []int {
 	var multiset []int
 
 	for i := 0; i < size; i++ {
-		repetitions := rand.Intn(5)
+		repetitions := rand.Intn(10)
 
 		for j := 0; j < repetitions; j++ {
 			multiset = append(multiset, i)

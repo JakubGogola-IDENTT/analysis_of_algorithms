@@ -25,11 +25,17 @@ func (mc *MinCount) parseFlags() {
 func (mc *MinCount) Init() {
 	mc.parseFlags()
 
-	multiset := generateMultisetWithRepetitions(mc.multisetSize)
-
 	if mc.testMode {
-		runTests(mc.withRepetitions)
+		runTests()
 		return
+	}
+
+	var multiset []int
+
+	if mc.withRepetitions {
+		multiset = generateMultisetWithRepetitions(mc.multisetSize)
+	} else {
+		multiset = generateMultiset(mc.multisetSize)
 	}
 
 	count := counting(multiset, mc.k)

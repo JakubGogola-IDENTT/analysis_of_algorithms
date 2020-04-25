@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"sync"
 )
 
 // counting is implementation of Min Count algorithm
@@ -29,22 +30,28 @@ func counting(multiset []int, k int) int {
 	return int(float64(k-1) / M[k-1])
 }
 
-func runTests(withRepetitions bool) {
+func runTests() {
+	var wg sync.WaitGroup
+
 	ks := []int{2, 3, 10, 100, 400}
 
 	for _, k := range ks {
-		test(k, withRepetitions)
+		wg.Add(2)
+		go test(k, false, &wg)
+		go test(k, true, &wg)
 	}
 
+	wg.Wait()
 }
 
-func test(k int, withRepetitions bool) {
+func test(k int, withRepetitions bool, wg *sync.WaitGroup) {
 	file, err := os.Create(getFileName(k, withRepetitions))
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	defer wg.Done()
 	defer file.Close()
 
 	fmt.Fprintf(file, "k,n,n_wave\n")
