@@ -4,7 +4,6 @@ from helpers import get_hash
 from data import _sentinel
 
 def unique_sum(multiset_queue, m):
-    # initilize array with hashes
     M = [math.inf] * m
 
     while True:
