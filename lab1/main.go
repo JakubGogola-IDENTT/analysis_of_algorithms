@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	anal "lab1/analysis"
+)
 
 func main() {
-	fmt.Println("Hello, world!")
+	a := anal.Analysis{}
+
+	a.RunTests()
 }
