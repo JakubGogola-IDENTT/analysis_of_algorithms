@@ -5,7 +5,7 @@ from unique_sum import unique_sum
 
 if __name__ == '__main__':
     multiset_queue = Queue()
-    m = 1000
+    m = 100
 
     t1 = Thread(target=generate_data, args=(multiset_queue, m))
     t2 = Thread(target=unique_sum, args=(multiset_queue, m))
