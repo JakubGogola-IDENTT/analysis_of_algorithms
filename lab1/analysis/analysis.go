@@ -20,7 +20,7 @@ func (a *Analysis) ParseFlags() {
 	flag.IntVar(&a.lowerLimit, "l", 100, "lower limit")
 	flag.IntVar(&a.upperLimit, "u", 10000, "upper limit")
 	flag.IntVar(&a.step, "s", 100, "step size")
-	flag.IntVar(&a.repeats, "r", 100, "repeats number")
+	flag.IntVar(&a.repeats, "r", 1000, "repeats number")
 	flag.Parse()
 }
 
@@ -63,7 +63,7 @@ func (a *Analysis) TestScenario3() {
 	checkError(err)
 
 	fmt.Println("### Tests for scenario 3 ###")
-	for u := a.lowerLimit; u < a.upperLimit; u += a.step {
+	for u := a.lowerLimit; u < a.upperLimit/2; u += a.step {
 		printProgress(u)
 
 		ns := []int{2, u / 2, u}
