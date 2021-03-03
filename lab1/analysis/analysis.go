@@ -27,9 +27,9 @@ func (a *Analysis) ParseFlags() {
 // RunTests runs all tests.
 func (a *Analysis) RunTests() {
 	a.ParseFlags()
-	// a.TestScenario2()
-	// a.TestScenario3()
-	a.TestEx3()
+	a.TestScenario2()
+	a.TestScenario3()
+	a.TestEx4()
 }
 
 // TestScenario2 tests second scenario implementation.
@@ -82,9 +82,9 @@ func (a *Analysis) TestScenario3() {
 	fmt.Println("########################")
 }
 
-// TestEx3 tests third scenario implementation.
-func (a *Analysis) TestEx3() {
-	f, w := createFileWithWriter("ex3_tests.csv")
+// TestEx4 tests third scenario implementation.
+func (a *Analysis) TestEx4() {
+	f, w := createFileWithWriter("ex4_tests.csv")
 	defer f.Close()
 
 	_, err := w.WriteString("u,n,slots,rounds\n")
@@ -95,8 +95,6 @@ func (a *Analysis) TestEx3() {
 	u := 1000
 	printProgress(u)
 
-	// ns := []int{2, u / 2, u}
-
 	for n := 2; n <= u; n++ {
 		for r := 0; r < a.repeats; r++ {
 			slots, rounds := el.ElectByScenario3(u, n)
@@ -106,6 +104,6 @@ func (a *Analysis) TestEx3() {
 	}
 
 	w.Flush()
-	// }
+
 	fmt.Println("########################")
 }
