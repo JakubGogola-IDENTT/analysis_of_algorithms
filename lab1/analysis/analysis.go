@@ -16,7 +16,6 @@ type Analysis struct {
 
 // ParseFlags parses input flags with analysis parameters.
 func (a *Analysis) ParseFlags() {
-	// TODO: update default values
 	flag.IntVar(&a.lowerLimit, "l", 100, "lower limit")
 	flag.IntVar(&a.upperLimit, "u", 10000, "upper limit")
 	flag.IntVar(&a.step, "s", 100, "step size")
@@ -90,8 +89,7 @@ func (a *Analysis) TestEx4() {
 	_, err := w.WriteString("u,n,slots,rounds\n")
 	checkError(err)
 
-	fmt.Println("### Tests for scenario 3 ###")
-	// for u := a.lowerLimit; u < a.upperLimit/2; u += a.step {
+	fmt.Println("### Tests for exercise 4 ###")
 	u := 1000
 	printProgress(u)
 
