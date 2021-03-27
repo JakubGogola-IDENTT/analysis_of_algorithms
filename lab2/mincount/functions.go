@@ -4,12 +4,14 @@ import (
 	"encoding/binary"
 )
 
-func (mc *MinCount) getHash(v int) float64 {
+func (mc *MinCount) getHash(v, bits int) float64 {
 	converted := string(rune(v))
-
 	hash := mc.Hash.Sum([]byte(converted))
-
 	val := binary.BigEndian.Uint64(hash)
+
+	if bits > 0 && mc.Hash.Size() <= bits {
+		val &= (1 << bits) - 1
+	}
 
 	return float64(val>>11) / float64(1<<53)
 }

@@ -1,7 +1,8 @@
-package utils
+package anlaytics
 
 import (
 	"crypto/rand"
+	"lab2/utils"
 	"log"
 	"math/big"
 )
@@ -25,4 +26,14 @@ func CountDistinct(vs []int) int {
 	}
 
 	return len(distinctVs)
+}
+
+func createMultiset(size, randRange int) (multiset []int) {
+	multiset = make([]int, size)
+
+	for i := 0; i < size; i++ {
+		multiset[i] = utils.GetRandomInt(randRange)
+	}
+
+	return multiset
 }

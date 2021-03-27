@@ -12,18 +12,23 @@ type MinCount struct {
 	HashBitsLen int
 }
 
-func New(hash func() hash.Hash, k int) MinCount {
+func NewWithHashBitsLen(hashFunc func() hash.Hash, k, hashBitsLen int) MinCount {
 	return MinCount{
-		Hash: hash(),
-		K:    k,
+		Hash:        hashFunc(),
+		K:           k,
+		HashBitsLen: hashBitsLen,
 	}
+}
+
+func New(hashFunc func() hash.Hash, k int) MinCount {
+	return NewWithHashBitsLen(hashFunc, k, 0)
 }
 
 func (mc *MinCount) Sum(multiset []int) int {
 	hashes := mc.hashesList()
 
 	for _, x := range multiset {
-		hash := mc.getHash(x)
+		hash := mc.getHash(x, mc.HashBitsLen)
 
 		if hash < hashes[mc.K-1] && !contains(hash, hashes) {
 			hashes[mc.K-1] = hash
