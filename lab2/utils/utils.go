@@ -18,11 +18,11 @@ func GetRandomInt(size int) int {
 }
 
 func CountDistinct(vs []int) int {
-	diffVs := make(map[int]bool)
+	distinctVs := make(map[int]bool)
 
 	for _, v := range vs {
-		diffVs[v] = true
+		distinctVs[v] = true
 	}
 
-	return len(diffVs)
+	return len(distinctVs)
 }
