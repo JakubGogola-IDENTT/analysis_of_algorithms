@@ -28,9 +28,9 @@ func checkError(err error) {
 	}
 }
 
-func printProgress(v, param, div int) {
+func printProgress(param string, v, div int) {
 	if v%div == 0 {
-		fmt.Printf("%d | Progress: %d...\n", param, v)
+		fmt.Printf("%s | Progress: %d...\n", param, v)
 	}
 }
 
