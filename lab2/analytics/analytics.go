@@ -17,6 +17,7 @@ func test5bWorker(fileName string, k int, wg *sync.WaitGroup) {
 	algorithm := mc.New(sha256.New, k)
 
 	for n := 1; n <= 10000; n++ {
+		printProgress(n, k, 1000)
 		multiset := createMultiset(n, 10000)
 
 		expected := countDistinct(multiset)
