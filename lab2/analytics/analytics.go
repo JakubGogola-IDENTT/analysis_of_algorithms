@@ -4,32 +4,53 @@ import (
 	"crypto/sha256"
 	"fmt"
 	mc "lab2/mincount"
+	"sync"
 )
 
-func Test5b() {
-	ks := []int{2, 3, 10, 100, 400}
+func test5bWorker(fileName string, k int, wg *sync.WaitGroup) {
+	fmt.Printf("Starting for %d\n", k)
 
-	f, w := createFileWithWriter("5a.csv")
+	f, w := createFileWithWriter(fileName)
 	defer f.Close()
+	defer wg.Done()
 
-	_, err := w.WriteString("k,n,estimated_n\n")
-	checkError(err)
+	algorithm := mc.New(sha256.New, k)
 
-	for _, k := range ks {
-		algorithm := mc.New(sha256.New, k)
+	for n := 1; n <= 1000; n++ {
+		multiset := createMultiset(n, 10000)
 
-		fmt.Printf("k = %d\n", k)
+		expected := countDistinct(multiset)
+		estimated := algorithm.Count(multiset)
 
-		for n := 1; n <= 10000; n++ {
-			printProgress(n, 100)
-			multiset := createMultiset(n, 10000)
+		_, err := w.WriteString(fmt.Sprintf("%d,%d,%d,%d\n", k, n, expected, estimated))
+		checkError(err)
 
-			expected := countDistinct(multiset)
-			estimated := algorithm.Count(multiset)
-
-			_, err := w.WriteString(fmt.Sprintf("%d,%d,%d\n", n, expected, estimated))
-			checkError(err)
-		}
 		w.Flush()
 	}
+
+	fmt.Printf("Done for %d\n", k)
+}
+
+func Test5b() {
+	var wg sync.WaitGroup
+	var filesNames []string
+
+	ks := []int{2, 3, 10, 100, 400}
+
+	for _, k := range ks {
+		wg.Add(1)
+
+		fileName := fmt.Sprintf("data/5b_k_%d.csv", k)
+		filesNames = append(filesNames, fileName)
+
+		go test5bWorker(fileName, k, &wg)
+	}
+
+	wg.Wait()
+
+	mergeFiles("data/5b.csv", "k,n,expected,estimated\n", filesNames)
+}
+
+func TestAll() {
+	Test5b()
 }

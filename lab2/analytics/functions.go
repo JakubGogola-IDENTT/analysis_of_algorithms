@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"crypto/rand"
 	"fmt"
+	"io"
 	"log"
 	"math/big"
 	"os"
@@ -61,4 +62,27 @@ func createMultiset(size, randRange int) (multiset []int) {
 	}
 
 	return multiset
+}
+
+func mergeFiles(mainFileName, columns string, filesNames []string) {
+	mf, w := createFileWithWriter(mainFileName)
+	defer mf.Close()
+
+	_, err := w.WriteString(columns)
+	checkError(err)
+
+	for _, name := range filesNames {
+		f, err := os.Open(name)
+		checkError(err)
+
+		reader := bufio.NewReader(f)
+
+		_, err = io.Copy(w, reader)
+		checkError(err)
+
+		err = os.Remove(name)
+		checkError(err)
+
+		w.Flush()
+	}
 }
