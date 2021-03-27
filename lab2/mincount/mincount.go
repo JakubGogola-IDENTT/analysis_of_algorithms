@@ -24,7 +24,7 @@ func New(hashFunc func() hash.Hash, k int) MinCount {
 	return NewWithHashBitsLen(hashFunc, k, 0)
 }
 
-func (mc *MinCount) Sum(multiset []int) int {
+func (mc *MinCount) Count(multiset []int) int {
 	hashes := mc.hashesList()
 
 	for _, x := range multiset {

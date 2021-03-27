@@ -1,9 +1,7 @@
 package main
 
-import (
-	"fmt"
-)
+import "lab2/analytics"
 
 func main() {
-	fmt.Println("xD")
+	analytics.Test5b()
 }
