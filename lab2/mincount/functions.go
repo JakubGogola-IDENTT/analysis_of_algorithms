@@ -1,7 +1,6 @@
 package mincount
 
 import (
-	"fmt"
 	"io"
 	"math/big"
 	"strconv"
@@ -17,7 +16,6 @@ func (mc *MinCount) getHash(v, bits int) float64 {
 	var value, hashVal big.Int
 
 	hashVal.SetBytes(hash)
-	fmt.Println(hashVal.String())
 
 	// Lenght of binary representation of hash - bits limit
 	divider := uint(mc.Hash.Size()*8 - bits)
