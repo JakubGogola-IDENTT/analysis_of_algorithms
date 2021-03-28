@@ -28,7 +28,7 @@ func (mc *MinCount) Count(multiset []int) int {
 	hashes := mc.hashesList()
 
 	for _, x := range multiset {
-		hash := mc.getHash(x, mc.HashBitsLen)
+		hash := mc.getHash(x)
 
 		if hash < hashes[mc.K-1] && !contains(hash, hashes) {
 			hashes[mc.K-1] = hash

@@ -4,26 +4,37 @@ import (
 	"io"
 	"math/big"
 	"strconv"
+	"strings"
 )
 
-func (mc *MinCount) getHash(v, bits int) float64 {
+func (mc *MinCount) getHash(v int) float64 {
+	// TODO: probably requires deep refactor
 	converted := strconv.Itoa(v)
 
 	mc.Hash.Reset()
 	io.WriteString(mc.Hash, converted)
 	hash := mc.Hash.Sum(nil)
 
-	var value, hashVal big.Int
+	var value, hashVal, maxBinVal big.Int
 
 	hashVal.SetBytes(hash)
 
+	length := mc.HashBitsLen
+	maxLen := mc.Hash.Size() * 8
+
+	if maxLen < mc.HashBitsLen {
+		length = maxLen
+	}
+
 	// Lenght of binary representation of hash - bits limit
-	divider := uint(mc.Hash.Size()*8 - bits)
+	divider := uint(hashVal.BitLen() - length)
+
 	value.Rsh(&hashVal, divider)
 
-	maxVal := (1 << bits) - 1
+	maxBinRepr := strings.Repeat("1", length)
+	maxBinVal.SetString(maxBinRepr, 2)
 
-	return float64(value.Int64()) / float64(maxVal)
+	return float64(value.Uint64()) / float64(maxBinVal.Uint64())
 }
 
 func (mc *MinCount) hashesList() (hashes []float64) {
