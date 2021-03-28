@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"hash"
 	mc "lab2/mincount"
+	"strconv"
 	"sync"
 )
 
@@ -21,7 +22,7 @@ func test5bWorker(fileName string, k int, wg *sync.WaitGroup) {
 	algorithm := mc.New(sha256.New, k)
 
 	for n := 1; n <= 10000; n++ {
-		printProgress(string(rune(k)), n, 1000)
+		printProgress(strconv.Itoa(k), n, 1000)
 		multiset := createMultiset(n, 10000)
 
 		expected := countDistinct(multiset)
@@ -110,5 +111,5 @@ func Test6() {
 
 func TestAll() {
 	Test5b()
-	Test6()
+	// Test6()
 }
