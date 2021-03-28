@@ -1,19 +1,35 @@
 package mincount
 
 import (
-	"encoding/binary"
+	"fmt"
+	"io"
+	"math/big"
+	"strconv"
 )
 
 func (mc *MinCount) getHash(v, bits int) float64 {
-	converted := string(rune(v))
-	hash := mc.Hash.Sum([]byte(converted))
-	val := binary.BigEndian.Uint64(hash)
+	converted := strconv.Itoa(v)
 
-	if bits > 0 && mc.Hash.Size() <= bits {
-		val &= (1 << bits) - 1
-	}
+	mc.Hash.Reset()
+	io.WriteString(mc.Hash, converted)
+	hash := mc.Hash.Sum(nil)
 
-	return float64(val>>11) / float64(1<<53)
+	var value, hashVal big.Int
+
+	hashVal.SetBytes(hash)
+	fmt.Println(hashVal.String())
+
+	// Lenght of binary representation of hash - bits limit
+	divider := uint(mc.Hash.Size()*8 - bits)
+	value.Rsh(&hashVal, divider)
+
+	maxVal := (1 << bits) - 1
+
+	return float64(value.Int64()) / float64(maxVal)
+}
+
+func (mc *MinCount) XD(v, bits int) float64 {
+	return mc.getHash(v, bits)
 }
 
 func (mc *MinCount) hashesList() (hashes []float64) {

@@ -1,7 +1,16 @@
 package main
 
-import "lab2/analytics"
+import (
+	"crypto/md5"
+	"fmt"
+	"lab2/mincount"
+)
 
 func main() {
-	analytics.TestAll()
+	mc := mincount.New(md5.New, 400)
+	v := 2137
+	hash := mc.XD(v, 16)
+	fmt.Println(hash)
+
+	// analytics.TestAll()
 }
