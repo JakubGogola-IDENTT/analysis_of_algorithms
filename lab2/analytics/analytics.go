@@ -111,5 +111,5 @@ func Test6() {
 
 func TestAll() {
 	Test5b()
-	// Test6()
+	Test6()
 }
