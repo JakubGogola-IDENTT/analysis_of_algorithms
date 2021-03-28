@@ -8,33 +8,28 @@ import (
 )
 
 func (mc *MinCount) getHash(v int) float64 {
-	// TODO: probably requires deep refactor
-	converted := strconv.Itoa(v)
+	var hashVal, maxBinVal big.Int
 
 	mc.Hash.Reset()
-	io.WriteString(mc.Hash, converted)
+	io.WriteString(mc.Hash, strconv.Itoa(v))
 	hash := mc.Hash.Sum(nil)
-
-	var value, hashVal, maxBinVal big.Int
 
 	hashVal.SetBytes(hash)
 
-	length := mc.HashBitsLen
-	maxLen := mc.Hash.Size() * 8
+	hashLen := mc.HashBitsLen
+	maxHashLen := mc.Hash.Size() * 8
 
-	if maxLen < mc.HashBitsLen {
-		length = maxLen
+	if maxHashLen < mc.HashBitsLen {
+		hashLen = maxHashLen
 	}
 
-	// Lenght of binary representation of hash - bits limit
-	divider := uint(hashVal.BitLen() - length)
+	divideBy := hashVal.BitLen() - hashLen
 
-	value.Rsh(&hashVal, divider)
+	hashVal.Rsh(&hashVal, uint(divideBy))
 
-	maxBinRepr := strings.Repeat("1", length)
-	maxBinVal.SetString(maxBinRepr, 2)
+	maxBinVal.SetString(strings.Repeat("1", mc.HashBitsLen), 2)
 
-	return float64(value.Uint64()) / float64(maxBinVal.Uint64())
+	return float64(hashVal.Uint64()) / float64(maxBinVal.Uint64())
 }
 
 func (mc *MinCount) hashesList() (hashes []float64) {

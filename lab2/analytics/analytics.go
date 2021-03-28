@@ -23,7 +23,7 @@ func test5bWorker(fileName string, k int, wg *sync.WaitGroup) {
 
 	for n := 1; n <= 10000; n++ {
 		printProgress(strconv.Itoa(k), n, 1000)
-		multiset := createMultiset(n, 10000)
+		multiset := createMultiset(n, 100000)
 
 		expected := countDistinct(multiset)
 		estimated := algorithm.Count(multiset)
@@ -68,8 +68,8 @@ func test6Worker(fileName, hashFuncName string, hashFunc func() hash.Hash, wg *s
 		algorithm := mc.NewWithHashBitsLen(hashFunc, 400, b)
 
 		printProgress(hashFuncName, b, 1)
-		for i := 0; i < 1000; i++ {
-			multiset := createMultiset(10000, 10000)
+		for i := 0; i < 10; i++ {
+			multiset := createMultiset(10000, 100000)
 
 			expected := countDistinct(multiset)
 			estimated := algorithm.Count(multiset)
@@ -110,6 +110,6 @@ func Test6() {
 }
 
 func TestAll() {
-	Test5b()
+	// Test5b()
 	Test6()
 }
