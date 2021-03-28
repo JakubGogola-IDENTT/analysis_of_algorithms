@@ -21,7 +21,7 @@ func NewWithHashBitsLen(hashFunc func() hash.Hash, k, hashBitsLen int) MinCount 
 }
 
 func New(hashFunc func() hash.Hash, k int) MinCount {
-	return NewWithHashBitsLen(hashFunc, k, 0)
+	return NewWithHashBitsLen(hashFunc, k, hashFunc().Size()*8)
 }
 
 func (mc *MinCount) Count(multiset []int) int {

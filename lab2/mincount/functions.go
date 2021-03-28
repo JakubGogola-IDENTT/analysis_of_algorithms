@@ -26,10 +26,6 @@ func (mc *MinCount) getHash(v, bits int) float64 {
 	return float64(value.Int64()) / float64(maxVal)
 }
 
-func (mc *MinCount) XD(v, bits int) float64 {
-	return mc.getHash(v, bits)
-}
-
 func (mc *MinCount) hashesList() (hashes []float64) {
 	hashes = make([]float64, mc.K)
 
