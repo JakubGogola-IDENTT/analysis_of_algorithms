@@ -30,7 +30,7 @@ func (mc *MinCount) Count(multiset []int) int {
 	for _, x := range multiset {
 		hash := mc.getHash(x)
 
-		if hash < hashes[mc.K-1] && !contains(hash, hashes) {
+		if hash < hashes[mc.K-1] && !contains(hashes, hash) {
 			hashes[mc.K-1] = hash
 
 			sort.Float64s(hashes)

@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+func (mc *MinCount) XD(v int) float64 {
+	return mc.getHash(v)
+}
+
 func (mc *MinCount) getHash(v int) float64 {
 	var hashVal, maxBinVal big.Int
 
@@ -23,7 +27,7 @@ func (mc *MinCount) getHash(v int) float64 {
 		hashLen = maxHashLen
 	}
 
-	divideBy := hashVal.BitLen() - hashLen
+	divideBy := len(hashVal.Bytes())*8 - hashLen
 
 	hashVal.Rsh(&hashVal, uint(divideBy))
 
@@ -42,7 +46,7 @@ func (mc *MinCount) hashesList() (hashes []float64) {
 	return hashes
 }
 
-func contains(n float64, vs []float64) bool {
+func contains(vs []float64, n float64) bool {
 	for _, v := range vs {
 		if v == n {
 			return true
