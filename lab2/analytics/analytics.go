@@ -136,7 +136,7 @@ func Test5c() {
 	var wg sync.WaitGroup
 	var filesNames []string
 
-	ks := []int{100, 120, 150, 170, 200, 220, 250, 270, 280, 300}
+	ks := []int{100, 120, 150, 170, 200, 220, 250, 270, 280, 300, 310, 320, 330}
 
 	for _, k := range ks {
 		wg.Add(1)
@@ -205,8 +205,8 @@ func Test6() {
 }
 
 func TestAll() {
-	Test5a()
+	// Test5a()
 	Test5c()
-	Test5b()
-	Test6()
+	// Test5b()
+	// Test6()
 }
