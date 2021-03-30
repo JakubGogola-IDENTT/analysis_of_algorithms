@@ -54,11 +54,21 @@ func countDistinct(vs []int) int {
 	return len(distinctVs)
 }
 
-func createMultiset(size, randRange int) (multiset []int) {
+func createMultiset(size, randRange int, withRepetitions bool) (multiset []int) {
+	usedValues := make(map[int]bool)
 	multiset = make([]int, size)
 
-	for i := 0; i < size; i++ {
-		multiset[i] = getRandomInt(randRange)
+	i := 0
+	for i < size {
+		n := getRandomInt(randRange)
+
+		if !withRepetitions && usedValues[n] {
+			continue
+		}
+
+		usedValues[n] = true
+		multiset[i] = n
+		i++
 	}
 
 	return multiset
