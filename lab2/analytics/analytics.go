@@ -205,8 +205,8 @@ func Test6() {
 }
 
 func TestAll() {
-	// Test5a()
+	Test5a()
 	Test5c()
-	// Test5b()
-	// Test6()
+	Test5b()
+	Test6()
 }
