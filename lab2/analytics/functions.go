@@ -3,12 +3,19 @@ package analytics
 import (
 	"bufio"
 	"crypto/rand"
+	"flag"
 	"fmt"
 	"io"
 	"log"
 	"math/big"
 	"os"
 )
+
+func (a *Analytics) parseFlags() {
+	flag.BoolVar(&a.runInParallel, "p", false, "Run all tests in parallel")
+	flag.BoolVar(&a.independentSets, "i", true, "Use indepndent sets for tests")
+	flag.Parse()
+}
 
 func createFileWithWriter(fileName string) (*os.File, *bufio.Writer) {
 	f, err := os.Create(fileName)
@@ -54,7 +61,7 @@ func countDistinct(vs []int) int {
 	return len(distinctVs)
 }
 
-func createMultiset(size, randRange int, withRepetitions bool) (multiset []int) {
+func createDependentMultiset(size, randRange int, withRepetitions bool) (multiset []int) {
 	usedValues := make(map[int]bool)
 	multiset = make([]int, size)
 
@@ -69,6 +76,16 @@ func createMultiset(size, randRange int, withRepetitions bool) (multiset []int) 
 		usedValues[n] = true
 		multiset[i] = n
 		i++
+	}
+
+	return multiset
+}
+
+func createIndependendMultiset(size int) (multiset []int) {
+	multiset = make([]int, size)
+
+	for i := 0; i < size; i++ {
+		multiset[i] = i + 1
 	}
 
 	return multiset
