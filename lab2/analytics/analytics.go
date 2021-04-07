@@ -82,17 +82,22 @@ func (a *Analytics) test5bWorker(fileName string, k int, wg *sync.WaitGroup) {
 
 	var multiset []int
 
+	last := 0
+
 	for n := 1; n <= 10000; n++ {
 		printProgress(strconv.Itoa(k), n, 1000)
 
 		if a.independentSets {
-			multiset = createIndependendMultiset(n)
+			multiset, last = createIndependendMultiset(n, last+1)
 		} else {
 			multiset = createDependentMultiset(n, 100000, true)
 		}
 
-		expected := countDistinct(multiset)
-		estimated := algorithm.Count(multiset)
+		var expected, estimated int
+
+		expected = countDistinct(multiset)
+
+		estimated = algorithm.Count(multiset)
 
 		_, err := w.WriteString(fmt.Sprintf("%d,%d,%d,%d\n", k, n, expected, estimated))
 		checkError(err)
@@ -138,11 +143,13 @@ func (a *Analytics) test5cWorker(fileName string, k int, wg *sync.WaitGroup) {
 
 	var multiset []int
 
+	last := 0
+
 	for n := 1; n <= 10000; n++ {
 		printProgress(strconv.Itoa(k), n, 1000)
 
 		if a.independentSets {
-			multiset = createIndependendMultiset(n)
+			multiset, last = createIndependendMultiset(n, last+1)
 		} else {
 			multiset = createDependentMultiset(n, 100000, true)
 		}
@@ -163,7 +170,7 @@ func (a *Analytics) Test5c(mainWg *sync.WaitGroup) {
 	var wg sync.WaitGroup
 	var filesNames []string
 
-	ks := []int{110, 115, 120, 125, 130}
+	ks := []int{275, 280, 290}
 
 	if mainWg != nil {
 		defer mainWg.Done()
@@ -196,10 +203,10 @@ func (a *Analytics) test6Worker(fileName, hashFuncName string, hashFunc func() h
 		algorithm := mc.NewWithHashBitsLen(hashFunc, 400, b)
 
 		printProgress(hashFuncName, b, 1)
-		for i := 0; i < 1000; i++ {
 
+		for i := 0; i < 1000; i++ {
 			if a.independentSets {
-				multiset = createIndependendMultiset(10000)
+				multiset, _ = createIndependendMultiset(10000, 0)
 			} else {
 				multiset = createDependentMultiset(10000, 100000, true)
 			}

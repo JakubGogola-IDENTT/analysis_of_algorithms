@@ -81,14 +81,15 @@ func createDependentMultiset(size, randRange int, withRepetitions bool) (multise
 	return multiset
 }
 
-func createIndependendMultiset(size int) (multiset []int) {
+func createIndependendMultiset(size, start int) (multiset []int, end int) {
 	multiset = make([]int, size)
 
 	for i := 0; i < size; i++ {
-		multiset[i] = i + 1
+		end = i + start
+		multiset[i] = end
 	}
 
-	return multiset
+	return multiset, end
 }
 
 func mergeFiles(mainFileName, columns string, filesNames []string) {
