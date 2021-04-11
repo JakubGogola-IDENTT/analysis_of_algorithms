@@ -28,6 +28,10 @@ func New(hashFunc func() hash.Hash, b int) HyperLogLog {
 	}
 }
 
+func (hll *HyperLogLog) Clear() {
+	hll.regs = make([]uint8, hll.m)
+}
+
 func (hll *HyperLogLog) Add(value int) {
 	hash := hll.getHash(value)
 
@@ -46,7 +50,7 @@ func (hll *HyperLogLog) Count() uint64 {
 
 	m := float64(hll.m)
 	if estimation <= m*2.5 {
-		if c := hll.countZeroes(); c > 0 {
+		if c := hll.countZeroes(); c != 0 {
 			return uint64(m * math.Log(m/float64(c)))
 		}
 
