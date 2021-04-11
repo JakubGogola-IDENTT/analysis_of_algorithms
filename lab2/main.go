@@ -1,7 +1,9 @@
 package main
 
-import "lab2/analytics"
+import anal "lab2/analytics"
 
 func main() {
-	analytics.TestAll()
+	a := anal.Analytics{}
+
+	a.TestAll()
 }
