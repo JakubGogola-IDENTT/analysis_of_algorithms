@@ -10,11 +10,11 @@ const (
 	alpha16 float64 = 0.673
 	alpha32 float64 = 0.697
 	alpha64 float64 = 0.709
-	twoTo32 uint64  = 1 << 32
+	twoTo32 float64 = 1 << 32
 )
 
 func (hll *HyperLogLog) getAlpha() float64 {
-	switch hll.M {
+	switch hll.m {
 	case 16:
 		return alpha16
 	case 32:
@@ -22,20 +22,20 @@ func (hll *HyperLogLog) getAlpha() float64 {
 	case 64:
 		return alpha64
 	default:
-		return 0.7213 / (1 + 1.079/float64(hll.M))
+		return 0.7213 / (1 + 1.079/float64(hll.m))
 	}
 }
 
 func (hll *HyperLogLog) getHash(v int) uint32 {
 	var hashVal big.Int
 
-	hll.Hash.Reset()
-	io.WriteString(hll.Hash, strconv.Itoa(v))
-	hash := hll.Hash.Sum(nil)
+	hll.hash.Reset()
+	io.WriteString(hll.hash, strconv.Itoa(v))
+	hash := hll.hash.Sum(nil)
 
 	hashVal.SetBytes(hash)
 
-	if hashLen := hll.Hash.Size() * 8; hashLen > 32 {
+	if hashLen := hll.hash.Size() * 8; hashLen > 32 {
 		shift := hashLen - 32
 		hashVal.Rsh(&hashVal, uint(shift))
 	}
@@ -50,7 +50,7 @@ func (hll *HyperLogLog) getEstimate() float64 {
 		sum += 1.0 / float64(uint64(1)<<r)
 	}
 
-	m := float64(hll.M)
+	m := float64(hll.m)
 	return hll.getAlpha() * m * m / sum
 }
 
@@ -65,8 +65,10 @@ func (hll *HyperLogLog) countZeroes() (count int) {
 }
 
 func (hll *HyperLogLog) eb32(v uint32) uint32 {
-	m := uint32(((1 << (32 - hll.B)) - 1) << hll.B)
-	return (v & m) >> hll.B
+	lo := 32 - hll.b
+
+	m := uint32(((1 << (32 - lo)) - 1) << lo)
+	return (v & m) >> lo
 }
 
 // https://embeddedgurus.com/state-space/2014/09/fast-deterministic-and-portable-counting-leading-zeros/

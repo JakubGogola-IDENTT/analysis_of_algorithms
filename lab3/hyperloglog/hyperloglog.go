@@ -7,21 +7,23 @@ import (
 )
 
 type HyperLogLog struct {
-	Hash hash.Hash
-	M    int
-	B    int
+	hash hash.Hash
+	m    int
+	b    int
 	regs []uint8
 }
 
-func New(hashFunc func() hash.Hash, m, b int) HyperLogLog {
+func New(hashFunc func() hash.Hash, b int) HyperLogLog {
 	if b < 4 || b > 16 {
 		log.Fatal("b should be in [4;16]")
 	}
 
+	m := 1 << b
+
 	return HyperLogLog{
-		Hash: hashFunc(),
-		M:    m,
-		B:    b,
+		hash: hashFunc(),
+		m:    m,
+		b:    b,
 		regs: make([]uint8, m),
 	}
 }
@@ -30,7 +32,7 @@ func (hll *HyperLogLog) Add(value int) {
 	hash := hll.getHash(value)
 
 	j := hll.eb32(hash)
-	w := hash<<hll.B | j<<(hll.B-1)
+	w := hash<<hll.b | j<<(hll.b-1)
 
 	zeroBits := hll.clz32(w) + 1
 
@@ -40,18 +42,18 @@ func (hll *HyperLogLog) Add(value int) {
 }
 
 func (hll *HyperLogLog) Count() uint64 {
-	estimate := hll.getEstimate()
+	estimation := hll.getEstimate()
 
-	m := float64(hll.M)
-	if estimate <= m*2.5 {
+	m := float64(hll.m)
+	if estimation <= m*2.5 {
 		if c := hll.countZeroes(); c > 0 {
 			return uint64(m * math.Log(m/float64(c)))
 		}
 
-		return uint64(estimate)
-	} else if estimate < float64(twoTo32)/30. {
-		return uint64(estimate)
+		return uint64(estimation)
+	} else if estimation < twoTo32/30. {
+		return uint64(estimation)
 	}
 
-	return uint64(-float64(twoTo32) * math.Log(1.-estimate/float64(twoTo32)))
+	return uint64(-twoTo32 * math.Log(1.-estimation/twoTo32))
 }

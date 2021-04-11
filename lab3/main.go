@@ -7,11 +7,13 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello, world!")
+	hll := hyperloglog.New(sha256.New, 16)
 
-	hll := hyperloglog.New(sha256.New, 4, 10)
-
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 100000; i++ {
 		hll.Add(i)
 	}
+
+	est := hll.Count()
+
+	fmt.Println(est)
 }
