@@ -3,6 +3,7 @@ package hyperloglog
 import (
 	"hash"
 	"log"
+	"math"
 )
 
 type HyperLogLog struct {
@@ -38,7 +39,19 @@ func (hll *HyperLogLog) Add(value int) {
 	}
 }
 
-func (hll *HyperLogLog) Count() {
+func (hll *HyperLogLog) Count() uint64 {
 	estimate := hll.getEstimate()
 
+	m := float64(hll.M)
+	if estimate <= m*2.5 {
+		if c := hll.countZeroes(); c > 0 {
+			return uint64(m * math.Log(m/float64(c)))
+		}
+
+		return uint64(estimate)
+	} else if estimate < float64(twoTo32)/30. {
+		return uint64(estimate)
+	}
+
+	return uint64(-float64(twoTo32) * math.Log(1.-estimate/float64(twoTo32)))
 }
