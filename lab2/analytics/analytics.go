@@ -256,10 +256,10 @@ func (a *Analytics) Test6(mainWg *sync.WaitGroup) {
 func (a *Analytics) TestAll() {
 	var wg *sync.WaitGroup
 	testFuncs := []func(*sync.WaitGroup){
-		// a.Test5a,
-		// a.Test5b,
+		a.Test5a,
+		a.Test5b,
 		a.Test5c,
-		// a.Test6,
+		a.Test6,
 	}
 
 	a.parseFlags()
