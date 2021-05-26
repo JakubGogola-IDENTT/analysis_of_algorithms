@@ -1,8 +1,8 @@
 package mis
 
-func contains(value int, arr []int) bool {
-	for _, v := range arr {
-		if v == value {
+func contains(vs []*vertex, p *vertex) bool {
+	for _, v := range vs {
+		if v.id == p.id {
 			return true
 		}
 	}

@@ -1,91 +1,141 @@
 package mis
 
 type Graph struct {
-	vs    []int
-	es    []edge
-	prefs map[int]int
+	vs []vertex
+	es []edge
 }
 
-type vertex struct{
-	id int
+type vertex struct {
+	id   int
 	pref *vertex
 }
 
 type edge struct {
-	i, j int
+	v1, v2 *vertex
 }
 
-func (g *Graph) getAdj(v int) (adj []int) {
-	if v == -1 {
+func (g *Graph) getAdj(v *vertex) (adj []*vertex) {
+	if v == nil {
 		return adj
 	}
 
-	for _, e := range g.es {
-		if v == e.i {
-			adj = append(adj, e.j)
+	for i, e := range g.es {
+		if v.id == e.v1.id {
+			adj = append(adj, g.es[i].v2)
 		}
 
-		if v == e.j {
-			adj = append(adj, e.i)
+		if v.id == e.v2.id {
+			adj = append(adj, g.es[i].v1)
 		}
 	}
 
 	return adj
 }
 
-func (g *Graph) isMarried(p int) bool {
+func (g *Graph) isMarried(p *vertex) bool {
 	pAdj := g.getAdj(p)
 
-	q := g.prefs[p]
+	q := p.pref
 	qAdj := g.getAdj(q)
 
-	return contains(p, pAdj) && contains(g.prefs[q], qAdj) // TODO: check if it works
+	return p.pref.id == q.pref.id && contains(pAdj, p) && contains(qAdj, p) // TODO: check if it works
 }
 
-func (g *Graph) process(p int) {
+func (g *Graph) isSingle(p *vertex) bool {
 	adj := g.getAdj(p)
 
-	if g.prefs[p] == -1 {
-		q := -1
-		for _, a := range adj {
-			if next := g.prefs[a]; next == -1 {
-				q = next
+	allMarried := true
+	for _, a := range adj {
+		allMarried = allMarried && g.isMarried(a)
+	}
+
+	return p.pref == nil && allMarried
+}
+
+func (g *Graph) isStable() bool {
+	for i := range g.vs {
+		if !g.isSingle(&g.vs[i]) || g.isMarried(&g.vs[i]) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (g *Graph) process(p *vertex) {
+	var q *vertex
+	adj := g.getAdj(p)
+
+	// accept proposal
+	if p.pref == nil {
+
+		q = nil
+
+		for i, a := range adj {
+			if a.pref != nil && a.pref.id == p.id {
+				q = adj[i]
 				break
 			}
 		}
 
-		if q != -1 {
-			g.prefs[p] = q
+		if q != nil {
+			p.pref = q
 		}
 	}
 
-	if g.prefs[p] == -1 {
-		anyFree := false
-		for _, a := range adj {
-			if g.prefs[a] 
+	// propose
+	allNotMarriedWithP := true
+	someFree := false
+	q = nil
+
+	for i, a := range adj {
+		if a.pref == nil {
+			someFree = true
+			q = adj[i]
+			continue
 		}
+
+		if a.pref.id == p.id {
+			allNotMarriedWithP = false
+			break
+		}
+	}
+
+	if p.pref == nil && allNotMarriedWithP && someFree {
+		p.pref = q
+	}
+
+	// unchain
+	q = p.pref
+
+	if q != nil && q.pref != nil && q.pref.id != p.id {
+		p.pref = nil
 	}
 }
 
 func New(n int) (g Graph) {
-	g.vs = make([]int, n)
-	g.prefs = make(map[int]int, n)
+	g.vs = make([]vertex, n)
 
 	for i := range g.vs {
-		g.vs[i] = i
+		g.vs[i] = vertex{
+			id: i,
+		}
 	}
 
-	for _, i := range g.vs {
-		for _, j := range g.vs {
-			if i < j {
-				g.es = append(g.es, edge{i, j})
+	for i, p := range g.vs {
+		for j, q := range g.vs {
+			if p.id < q.id {
+				g.es = append(g.es, edge{
+					v1: &g.vs[i],
+					v2: &g.vs[j],
+				})
 			}
 		}
 	}
 
 	for idx, e := range g.es {
-		if e.i > e.j {
-			g.es[idx].i, g.es[idx].j = g.es[idx].j, g.es[idx].i
+		if e.v1.id > e.v2.id {
+			g.es[idx].v1, g.es[idx].v2 = g.es[idx].v2, g.es[idx].v1
 		}
 	}
 
@@ -93,16 +143,14 @@ func New(n int) (g Graph) {
 }
 
 func (g *Graph) Simulate() {
-	// TODO: clear graph prefs
-
-	for k := range g.prefs {
-		g.prefs[k] = -1
-	}
-
 	isStable := false
 	for !isStable {
-		for _, v := range g.vs {
-			g.process(v)
+		for i := range g.vs {
+			g.process(&g.vs[i])
+
+			if g.isStable() {
+				break
+			}
 		}
 	}
 }
