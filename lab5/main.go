@@ -1,9 +1,9 @@
 package main
 
 import (
-	"lab5/mutualexclusion"
+	"lab5/me"
 )
 
 func main() {
-	mutualexclusion.Simulate(5)
+	me.Simulate(4)
 }

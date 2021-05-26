@@ -1,4 +1,4 @@
-package mutualexclusion
+package me
 
 func copyArray(src []int) (dst []int) {
 	dst = make([]int, len(src))
