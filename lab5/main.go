@@ -1,9 +1,13 @@
 package main
 
 import (
-	"lab5/me"
+	"fmt"
+	"lab5/mis"
 )
 
 func main() {
-	me.Simulate(4)
+	// me.Simulate(4)
+	g := mis.New(5)
+	g.Simulate()
+	fmt.Println(g)
 }
