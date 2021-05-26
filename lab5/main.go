@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"lab5/mis"
 )
 
 func main() {
-	// me.Simulate(4)
-	g := mis.New(10)
+	g := mis.New(4)
 	g.Simulate()
-	fmt.Println(g)
+	g.PrintMIS()
 }

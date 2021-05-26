@@ -1,13 +1,20 @@
 package mis
 
+import (
+	"fmt"
+	"math/rand"
+	"strings"
+	"time"
+)
+
 type Graph struct {
 	vs []vertex
 	es []edge
 }
 
 type vertex struct {
-	id   int
-	pref *vertex
+	id  int
+	mis bool
 }
 
 type edge struct {
@@ -32,84 +39,63 @@ func (g *Graph) getAdj(v *vertex) (adj []*vertex) {
 	return adj
 }
 
-func (g *Graph) isMarried(p *vertex) bool {
-	pAdj := g.getAdj(p)
-
-	q := p.pref
-	qAdj := g.getAdj(q)
-
-	return p.pref.id == q.pref.id && contains(pAdj, p) && contains(qAdj, p) // TODO: check if it works
-}
-
-func (g *Graph) isSingle(p *vertex) bool {
+func (g *Graph) isSomeAdjInMIS(p *vertex) bool {
 	adj := g.getAdj(p)
 
-	allMarried := true
 	for _, a := range adj {
-		allMarried = allMarried && g.isMarried(a)
-	}
-
-	return p.pref == nil && allMarried
-}
-
-func (g *Graph) isStable() bool {
-	for i := range g.vs {
-		if !g.isSingle(&g.vs[i]) || g.isMarried(&g.vs[i]) {
-			return false
+		if a.mis {
+			return true
 		}
 	}
 
-	return true
+	return false
 }
 
-func (g *Graph) process(p *vertex) {
-	var q *vertex
+func (g *Graph) isConf(p *vertex) bool {
+	return p.mis && g.isSomeAdjInMIS(p)
+}
+
+func (g *Graph) isCand(p *vertex) bool {
 	adj := g.getAdj(p)
+	allAdjNotInMis := true
 
-	// accept proposal
-	if p.pref == nil {
-
-		q = nil
-
-		for i, a := range adj {
-			if a.pref != nil && a.pref.id == p.id {
-				q = adj[i]
-				break
-			}
-		}
-
-		if q != nil {
-			p.pref = q
-		}
-	}
-
-	// propose
-	allNotMarriedWithP := true
-	someFree := false
-	q = nil
-
-	for i, a := range adj {
-		if a.pref == nil {
-			someFree = true
-			q = adj[i]
-			continue
-		}
-
-		if a.pref.id == p.id {
-			allNotMarriedWithP = false
+	for _, a := range adj {
+		if a.mis {
+			allAdjNotInMis = false
 			break
 		}
 	}
 
-	if p.pref == nil && allNotMarriedWithP && someFree {
-		p.pref = q
+	return !p.mis && allAdjNotInMis
+}
+
+func (g *Graph) isAck(p *vertex) bool {
+	return p.mis && !g.isSomeAdjInMIS(p)
+}
+
+func (g *Graph) isNAck(p *vertex) bool {
+	return !p.mis && g.isSomeAdjInMIS(p)
+}
+
+func (g *Graph) isStable() bool {
+	allStable := true
+
+	for i := range g.vs {
+		v := &g.vs[i]
+
+		allStable = g.isAck(v) || g.isNAck(v)
 	}
 
-	// unchain
-	q = p.pref
+	return allStable
+}
 
-	if q != nil && q.pref != nil && q.pref.id != p.id {
-		p.pref = nil
+func (g *Graph) process(p *vertex) {
+	if g.isConf(p) {
+		p.mis = false
+	}
+
+	if g.isCand(p) {
+		p.mis = true
 	}
 }
 
@@ -118,16 +104,20 @@ func New(n int) (g Graph) {
 
 	for i := range g.vs {
 		g.vs[i] = vertex{
-			id: i,
+			id:  i,
+			mis: false,
 		}
 	}
 
-	for i, p := range g.vs {
-		for j, q := range g.vs {
+	for i := range g.vs {
+		p := g.vs[i]
+		for j := range g.vs {
+			q := g.vs[j]
+
 			if p.id < q.id {
 				g.es = append(g.es, edge{
-					v1: &g.vs[i],
-					v2: &g.vs[j],
+					v1: &p,
+					v2: &q,
 				})
 			}
 		}
@@ -142,15 +132,32 @@ func New(n int) (g Graph) {
 	return g
 }
 
-func (g *Graph) Simulate() {
-	isStable := false
-	for !isStable {
-		for i := range g.vs {
-			g.process(&g.vs[i])
+func (g *Graph) PrintMIS() {
+	for i := range g.vs {
+		v := &g.vs[i]
+		adj := g.getAdj(v)
 
-			if g.isStable() {
-				break
-			}
+		var adjLabels []string
+
+		for _, a := range adj {
+			adjLabels = append(adjLabels, fmt.Sprintf("%d: %t", a.id, a.mis))
+		}
+
+		fmt.Printf("%d: %t -> %s\n", v.id, v.mis, strings.Join(adjLabels, ", "))
+	}
+}
+
+func (g *Graph) Simulate() {
+	rand.Seed(time.Now().UnixNano())
+
+	for {
+		for i := range g.vs {
+			v := &g.vs[i]
+			g.process(v)
+		}
+
+		if g.isStable() {
+			break
 		}
 	}
 }
