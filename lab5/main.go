@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	mutualexclusion.Simulate(3)
+	mutualexclusion.Simulate(5)
 }

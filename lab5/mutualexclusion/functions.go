@@ -22,18 +22,32 @@ func getRange(min, max int) (rng []int) {
 	rng = make([]int, max-min+1)
 
 	for i := range rng {
-		rng[i] = min + 1
+		rng[i] = min + i
 	}
 
 	return rng
 }
 
-func fact(n int) (result int) {
-	result = 1
+func fact(n int) int {
+	result := 1
 
 	for i := 2; i <= n; i++ {
 		result *= i
 	}
 
 	return result
+}
+
+func areArraysEqual(arr1, arr2 []int) bool {
+	if len(arr1) != len(arr2) {
+		return false
+	}
+
+	for i := range arr1 {
+		if arr1[i] != arr2[i] {
+			return false
+		}
+	}
+
+	return true
 }

@@ -109,20 +109,6 @@ func buildPerms(n int) (arr [][]int) {
 	return arr
 }
 
-func areStatesEqual(state1, state2 []int) bool {
-	if len(state1) != len(state2) {
-		return false
-	}
-
-	for i := range state1 {
-		if state1[i] != state2[i] {
-			return false
-		}
-	}
-
-	return true
-}
-
 func visit(curr, visited []int, value int) {
 	id := getStateId(curr)
 	visited[id] = int(math.Max(float64(visited[id]), float64(value)))
@@ -133,46 +119,54 @@ func isVisited(curr, visited []int) bool {
 	return visited[id] != -1
 }
 
-func process(originState, visitedStates []int, perms [][]int, steps, n int) {
-	queue := list.New()
+func process(initState, visitedStates []int, perms [][]int, initStep, n int) {
+	q := list.New()
 	for _, perm := range perms {
-		queue.PushBack(path{copyArray(originState), perm, steps})
+		q.PushBack(path{
+			state: copyArray(initState),
+			perm:  perm,
+			step:  initStep,
+		})
 	}
 
-	for queue.Len() > 0 {
-		next := queue.Front()
-		currPath := next.Value.(path)
+	for q.Len() > 0 {
+		next := q.Front()
+		curr := next.Value.(path)
 
 		flag := true
-		for _, id := range currPath.perm {
-			if isStable(currPath.state) {
-				visit(originState, visitedStates, currPath.step)
+		for _, id := range curr.perm {
+			if isStable(curr.state) {
+				visit(initState, visitedStates, curr.step)
 				flag = false
 				break
 			}
 
-			if !areStatesEqual(currPath.state, originState) && isVisited(currPath.state, visitedStates) {
-				id := getStateId(currPath.state)
-				visit(originState, visitedStates, currPath.step+visitedStates[id])
+			if !areArraysEqual(curr.state, initState) && isVisited(curr.state, visitedStates) {
+				procId := getStateId(curr.state)
+				visit(initState, visitedStates, curr.step+visitedStates[procId])
 				flag = false
 				break
 			}
 
-			prevState := copyArray(currPath.state)
-			mutate(id, currPath.state)
+			prevState := copyArray(curr.state)
+			mutate(id, curr.state)
 
-			if !areStatesEqual(prevState, currPath.state) {
-				currPath.step++
+			if !areArraysEqual(prevState, curr.state) {
+				curr.step++
 			}
 		}
 
 		if flag {
 			for _, perm := range perms {
-				queue.PushBack(path{copyArray(currPath.state), perm, currPath.step})
+				q.PushBack(path{
+					state: copyArray(curr.state),
+					perm:  perm,
+					step:  curr.step,
+				})
 			}
 		}
 
-		queue.Remove(next)
+		q.Remove(next)
 	}
 }
 
