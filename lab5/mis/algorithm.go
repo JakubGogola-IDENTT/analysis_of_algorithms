@@ -104,6 +104,8 @@ func (g *Graph) process(p *vertex) {
 }
 
 func New(n int) (g Graph) {
+	rand.Seed(time.Now().UnixNano())
+
 	g.vs = make([]vertex, n)
 
 	for i := range g.vs {
@@ -113,18 +115,25 @@ func New(n int) (g Graph) {
 		}
 	}
 
-	for i := range g.vs {
-		p := &g.vs[i]
-		for j := range g.vs {
-			q := &g.vs[j]
+	for i := 1; i < len(g.vs); i++ {
+		p := &g.vs[i-1]
+		q := &g.vs[i]
 
-			if p.id < q.id {
-				g.es = append(g.es, edge{
-					v1: p,
-					v2: q,
-				})
-			}
+		g.es = append(g.es, edge{
+			v1: p,
+			v2: q,
+		})
+
+		if i == 1 {
+			continue
 		}
+
+		rv := rand.Intn(i - 1)
+
+		g.es = append(g.es, edge{
+			v1: &g.vs[rv],
+			v2: q,
+		})
 	}
 
 	for idx := range g.es {
@@ -159,8 +168,6 @@ func (g *Graph) PrintMIS() {
 }
 
 func (g *Graph) Simulate() {
-	rand.Seed(time.Now().UnixNano())
-
 	for {
 		for i := range g.vs {
 			v := &g.vs[i]
