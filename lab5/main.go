@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	g := mis.New(4)
+	g := mis.New(10)
 	g.Simulate()
 	g.PrintMIS()
 }
