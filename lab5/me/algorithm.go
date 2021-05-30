@@ -121,6 +121,8 @@ func isVisited(curr, visited []int) bool {
 
 func process(initState, visitedStates []int, perms [][]int, initStep, n int) {
 	q := list.New()
+
+	// add all permutations to list of possible states of all processes
 	for _, perm := range perms {
 		q.PushBack(path{
 			state: copyArray(initState),
@@ -135,6 +137,7 @@ func process(initState, visitedStates []int, perms [][]int, initStep, n int) {
 
 		flag := true
 		for _, id := range curr.perm {
+			// if system is stable then mark state of processes as visited
 			if isStable(curr.state) {
 				visit(initState, visitedStates, curr.step)
 				flag = false
@@ -179,6 +182,7 @@ func Simulate(n int) {
 		visitedStates[i] = -1
 	}
 
+	// generate all permutations (states combinations) for processes
 	perms := buildPerms(n)
 	for state := make([]int, n); state != nil; state = getNextState(state) {
 		process(copyArray(state), visitedStates, perms, 0, n)
