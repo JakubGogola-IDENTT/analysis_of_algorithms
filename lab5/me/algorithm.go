@@ -135,19 +135,19 @@ func process(initState, visitedStates []int, perms [][]int, initStep, n int) {
 		next := q.Front()
 		curr := next.Value.(path)
 
-		flag := true
+		moreConfigurations := true
 		for _, id := range curr.perm {
 			// if system is stable then mark state of processes as visited
 			if isStable(curr.state) {
 				visit(initState, visitedStates, curr.step)
-				flag = false
+				moreConfigurations = false
 				break
 			}
 
 			if !areArraysEqual(curr.state, initState) && isVisited(curr.state, visitedStates) {
 				procId := getStateId(curr.state)
 				visit(initState, visitedStates, curr.step+visitedStates[procId])
-				flag = false
+				moreConfigurations = false
 				break
 			}
 
@@ -159,7 +159,7 @@ func process(initState, visitedStates []int, perms [][]int, initStep, n int) {
 			}
 		}
 
-		if flag {
+		if moreConfigurations {
 			for _, perm := range perms {
 				q.PushBack(path{
 					state: copyArray(curr.state),

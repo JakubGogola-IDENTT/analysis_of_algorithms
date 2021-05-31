@@ -23,6 +23,8 @@ func main() {
 		})
 	}
 
+	fmt.Print("\n\n------------------------\n\n")
+
 	// ex11
 	fmt.Println("Ex11")
 	for i := 2; i < 15; i++ {
